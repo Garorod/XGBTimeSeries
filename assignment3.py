@@ -1,16 +1,10 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
+# %%
 import pandas as pd
+import numpy as np
 from sklearn.model_selection import train_test_split
 
 
-# In[2]:
-
-
+# %%
 x_cols = ['Loan_age', 'CreditScore',
        'FullDocumentation', 'State_CA', 'State_FL', 'State_NY', 'State_NJ',
        'State_GA', 'Spread', 'Spread_squared', 'Remaining_balance', 'LTV',
@@ -19,9 +13,7 @@ indicator_cols = ['Default_indicator', 'Prepayment_indicator']
 y_cols = ['status']
 
 
-# In[3]:
-
-
+# %%
 loans_df = pd.read_csv('notebooks/FRM_perf.csv')
 is_active = loans_df[['Default_indicator', 'Prepayment_indicator']].sum(axis=1) == 0
 loans_df['status'] = loans_df[indicator_cols].assign(Active=is_active.astype(int)).idxmax(axis=1).str.replace('_indicator', '').astype('category')
@@ -32,57 +24,39 @@ train_loans = loans_df.loc[loans_df['Loan_id'].isin(train_loan_id)]
 test_loans = loans_df.loc[loans_df['Loan_id'].isin(test_loan_id)]
 
 
-# In[4]:
-
-
+# %%
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.metrics import roc_auc_score, accuracy_score
 from imblearn.over_sampling import ADASYN, RandomOverSampler
-
-
-# In[5]:
-
 
 clf = RandomForestClassifier(max_depth=5)
 X_resampled, y_resampled = RandomOverSampler().fit_resample(train_loans[x_cols], train_loans[y_cols])
 clf.fit(X_resampled, y_resampled.ravel())
 
 
-# In[6]:
-
-
+# %%
 calc_auc = lambda df: roc_auc_score(df[y_cols].squeeze(), clf.predict_proba(df[x_cols]), multi_class='ovr')
 calc_auc(train_loans), calc_auc(test_loans)
 
 
-# In[7]:
-
-
+# %%
 calc_avg_prob = lambda df: pd.DataFrame(clf.predict_proba(df[x_cols]), columns=categories).assign(status=df[y_cols].values).pivot_table(index='status')
 calc_avg_prob(train_loans), calc_avg_prob(test_loans)
 
 
-# In[8]:
-
-
+# %%
 pd.DataFrame(clf.predict_proba(test_loans[x_cols]), columns=categories).plot()
 
 
-# In[9]:
-
-
+# %%
 y_resampled['status'].value_counts()
 
 
-# In[10]:
-
-
+# %%
 train_loans[y_cols]['status'].value_counts()
 
 
-# In[79]:
-
-
+# %%
 import importlib
 neuraltree = importlib.import_module('Neural-Tree.Layers.model')
 
@@ -91,18 +65,14 @@ tf.disable_v2_behavior()
 tf.reset_default_graph()
 
 
-# In[80]:
-
-
+# %%
 tree = neuraltree.SoftDecisionTree(max_depth=6,n_features=len(x_cols),n_classes=len(categories),max_leafs=None)
 tree.build_tree()
 
 optimizer = tf.train.AdamOptimizer(learning_rate=0.001,beta1=0.9,beta2=0.999,epsilon=1e-08).minimize(tree.loss)
 
 
-# In[81]:
-
-
+# %%
 def make_loans_batches(loans, batch_size):
     num_batches = int(len(loans) / batch_size + 0.5)
     scrambled = loans.sample(frac=1.0)
@@ -112,15 +82,7 @@ def make_loans_batches(loans, batch_size):
     return num_batches, _gen()
 
 
-# In[82]:
-
-
-import numpy as np
-
-
-# In[83]:
-
-
+# %%
 init = tf.global_variables_initializer()
 
 EPOCHS = 10000
@@ -164,10 +126,5 @@ with tf.Session() as sess:
             #print(collections.Counter(np.argmax(path_probs,axis=1)))
 
             #print(confusion_matrix(y_true=val_target,y_pred=val_preds) )
-
-
-# In[ ]:
-
-
 
 
