@@ -1,0 +1,3 @@
+[submodule "Neural-Tree"]
+	path = Neural-Tree
+	url = git@github.com:benoitdescamps/Neural-Tree.git
