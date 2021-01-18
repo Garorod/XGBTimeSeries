@@ -30,8 +30,8 @@ from sklearn.metrics import roc_auc_score, accuracy_score
 from imblearn.over_sampling import ADASYN, RandomOverSampler
 
 clf = RandomForestClassifier(max_depth=5)
-X_resampled, y_resampled = RandomOverSampler().fit_resample(train_loans[x_cols], train_loans[y_cols])
-clf.fit(X_resampled, y_resampled.ravel())
+X_resampled, y_resampled = RandomOverSampler().fit_resample(train_loans[x_cols], train_loans[y_cols]['status'])
+clf.fit(X_resampled, y_resampled)
 
 
 # %%
@@ -49,11 +49,11 @@ pd.DataFrame(clf.predict_proba(test_loans[x_cols]), columns=categories).plot()
 
 
 # %%
-y_resampled['status'].value_counts()
+y_resampled.value_counts()
 
 
 # %%
-train_loans[y_cols]['status'].value_counts()
+train_loans[y_cols].value_counts()
 
 
 # %%
