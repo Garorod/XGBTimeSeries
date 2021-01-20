@@ -1,3 +1,3 @@
-[submodule "Neural-Tree"]
-	path = Neural-Tree
-	url = git@github.com:benoitdescamps/Neural-Tree.git
+[submodule "distill-nn-tree"]
+	path = distill-nn-tree
+	url = git@github.com:yawerijaz-mfe/distill-nn-tree.git
