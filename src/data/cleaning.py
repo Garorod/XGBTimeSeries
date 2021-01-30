@@ -24,3 +24,12 @@ post_crisis = post_crisis.set_index(['mcd_loanid', 'sr_unique_id', 'sr_property_
 # mono = g['month_count'].is_monotonic_increasing
 # mono
 # %%
+delinq = post_crisis['payment_current_status'].isin(list('XRBF234'))
+first_delinquent_date = (delinq[delinq]
+            .reset_index('current_date')
+            .groupby('mcd_loanid')['current_date']
+            .first()
+            .rename('first_delinquent_date'))
+
+# post_crisis
+# %%
