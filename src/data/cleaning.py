@@ -52,8 +52,11 @@ def trim_and_save(file_path):
     file_name = split_path(file_path)[-1]
     df = pd.read_parquet(file_path)
     t_df = trim_to_first_60_day_delinq(df)
-    t_path = trimmed_data_dir + file_name + '.60_day_delinq_trim'
-    t_df.to_parquet(t_path)
+    loanid = t_df.index.get_level_values('mcd_loanid')
+    hashkey = pd.util.hash_array(loanid) % 100
+    for key, g_df in t_df.groupby(hashkey):
+        g_path = trimmed_data_dir + file_name + '.bucket_' + f'{key:02}'
+        g_df.to_parquet(g_path)
     return file_name
 #%%
 if __name__ == '__main__':
