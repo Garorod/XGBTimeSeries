@@ -1,6 +1,6 @@
 parquet_dir = '/DATA-0/mfe-afp-grp13/yawer/afp/data//'
 raw_data_dir = '/DATA-0/mfe-afp-grp13/raw_data/'
-trimmed_data_dir = '/DATA-0/mfe-afp-grp13/yawer/afp/trimmed_data//'
+trimmed_data_dir = '/DATA-0/mfe-afp-grp13/trimmed_data/delinq_60.post_crisis.20210130/'
 
 PREPAY_STATUSES = 'PT'
 DEFAULT_STATUSES = 'XRBF234'
