@@ -31,5 +31,13 @@ first_delinquent_date = (delinq[delinq]
             .first()
             .rename('first_delinquent_date'))
 
-# post_crisis
+post_crisis['first_delinquent_date'] = first_delinquent_date.reindex(delinq.index, level='mcd_loanid')
+post_crisis
+
+# %%
+no_delinq = post_crisis['first_delinquent_date'].isnull()
+before_deliq = post_crisis['current_date'] <= post_crisis['first_delinquent_date']
+missing_status = post_crisis['payment_current_status'] == '-'
+trimmed_df = post_crisis[(no_delinq|before_deliq) & ~missing_status].drop('first_delinquent_date', axis=1)
+
 # %%
